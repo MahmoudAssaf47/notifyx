@@ -1,0 +1,24 @@
+{
+  "name": "notifyx-delivery-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/worker.ts",
+    "build": "tsc",
+    "start": "node dist/worker.js"
+  },
+  "dependencies": {
+    "@notifyx/shared": "*",
+    "bullmq": "^5.7.8",
+    "dotenv": "^16.4.5",
+    "ioredis": "^5.4.1",
+    "nodemailer": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/nodemailer": "^8.0.1",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
+  }
+}

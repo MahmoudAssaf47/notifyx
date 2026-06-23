@@ -1,0 +1,17 @@
+node_modules
+dist
+build
+coverage
+.turbo
+.cache
+.git
+*.md
+.gitignore
+.env
+.env.local
+*.log
+.gitkeep
+.gitattributes
+.editorconfig
+.prettierrc
+.prettierignore

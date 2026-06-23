@@ -1,0 +1,15 @@
+FROM node:22-alpine AS base
+WORKDIR /app
+RUN npm install -g turbo
+
+FROM base AS builder
+COPY package.json turbo.json ./
+COPY packages/notifyx-shared ./packages/notifyx-shared
+COPY apps/notifyx-delivery-service ./apps/notifyx-delivery-service
+RUN turbo run build --filter=notifyx-delivery-service
+RUN npm prune --omit=dev --workspace=notifyx-delivery-service
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+COPY --from=builder /app .
+CMD ["node", "apps/notifyx-delivery-service/dist/worker.js"]

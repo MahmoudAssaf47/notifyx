@@ -1,0 +1,7 @@
+{
+  "extends": "../../packages/notifyx-shared/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*"]
+}

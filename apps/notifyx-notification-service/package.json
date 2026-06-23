@@ -1,0 +1,25 @@
+{
+  "name": "notifyx-notification-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "dotenv": "^16.4.5",
+    "zod": "^3.22.4",
+    "bullmq": "^5.7.8",
+    "ioredis": "^5.4.1",
+    "@notifyx/shared": "*"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.4.2",
+    "tsx": "^4.7.1"
+  }
+}

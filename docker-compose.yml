@@ -1,0 +1,158 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: notifyx-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: notifyx-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gateway
+    container_name: notifyx-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - GATEWAY_PORT=8080
+      - AUTH_SERVICE_URL=http://auth:3001
+      - NOTIFICATION_SERVICE_URL=http://notification:3002
+      - AUDIT_SERVICE_URL=http://audit:3005
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - auth
+      - notification
+      - audit
+      - redis
+
+  auth:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.auth
+    container_name: notifyx-auth
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - AUTH_PORT=3001
+      - MONGODB_URI=mongodb://mongodb:27017/notifyx
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=15m
+      - REFRESH_SECRET=${REFRESH_SECRET}
+      - REFRESH_EXPIRES_IN=7d
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  notification:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.notification
+    container_name: notifyx-notification
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=production
+      - NOTIFICATION_PORT=3002
+      - REDIS_URL=redis://redis:6379
+      - DISPATCH_APPS=${DISPATCH_APPS}
+      - DISPATCH_DEFAULT_NAME=${DISPATCH_DEFAULT_NAME}
+      - DISPATCH_DEFAULT_API_KEY=${DISPATCH_DEFAULT_API_KEY}
+      - DISPATCH_DEFAULT_DISCORD_WEBHOOK=${DISPATCH_DEFAULT_DISCORD_WEBHOOK}
+      - DISPATCH_DEFAULT_DISCORD_COLOR=${DISPATCH_DEFAULT_DISCORD_COLOR}
+      - DISPATCH_DEFAULT_SLACK_WEBHOOK=${DISPATCH_DEFAULT_SLACK_WEBHOOK}
+    depends_on:
+      - redis
+
+  delivery:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.delivery
+    container_name: notifyx-delivery
+    environment:
+      - NODE_ENV=production
+      - DELIVERY_PORT=3003
+      - REDIS_URL=redis://redis:6379
+      - DISPATCH_APPS=${DISPATCH_APPS}
+      - DISPATCH_DEFAULT_NAME=${DISPATCH_DEFAULT_NAME}
+      - DISPATCH_DEFAULT_API_KEY=${DISPATCH_DEFAULT_API_KEY}
+      - DISPATCH_DEFAULT_DISCORD_WEBHOOK=${DISPATCH_DEFAULT_DISCORD_WEBHOOK}
+      - DISPATCH_DEFAULT_DISCORD_COLOR=${DISPATCH_DEFAULT_DISCORD_COLOR}
+      - DISPATCH_DEFAULT_SLACK_WEBHOOK=${DISPATCH_DEFAULT_SLACK_WEBHOOK}
+    depends_on:
+      - redis
+
+  audit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.audit
+    container_name: notifyx-audit
+    ports:
+      - "3005:3005"
+    environment:
+      - NODE_ENV=production
+      - AUDIT_PORT=3005
+      - MONGODB_URI=mongodb://mongodb:27017/notifyx
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  analytics:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.analytics
+    container_name: notifyx-analytics
+    ports:
+      - "3004:3004"
+    environment:
+      - NODE_ENV=production
+      - ANALYTICS_PORT=3004
+      - MONGODB_URI=mongodb://mongodb:27017/notifyx
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+  admin:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.admin
+    container_name: notifyx-admin
+    ports:
+      - "3006:3006"
+    environment:
+      - NODE_ENV=production
+      - ADMIN_PORT=3006
+      - MONGODB_URI=mongodb://mongodb:27017/notifyx
+      - ADMIN_API_KEY=${ADMIN_API_KEY}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  mongodb-data:
