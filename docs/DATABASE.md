@@ -47,6 +47,6 @@
 - **Indexes**: `appName` (unique), `apiKey` (unique)
 - **TTL**: None
 
-## Indexes
+## Notes
 
-Ensure optimal query performance with compound indexes on frequent query patterns. Add TTL indexes to prevent unbounded collection growth.
+TTL indexes are set per collection to keep storage usage in check. Messages expire after 30 days, metrics after 7 days, audit/security logs after 90 days / 1 year respectively.

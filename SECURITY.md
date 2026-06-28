@@ -43,21 +43,15 @@ Response times are targets rather than guarantees.
 
 ---
 
-## Security Practices
+## What's in Place
 
-NotifyX follows industry security practices including:
-
-- Password hashing using Argon2id
-- Short-lived JWT access tokens
-- Refresh token rotation
-- Hashed API keys
-- Rate limiting
-- Security headers
-- Audit logging
-- Dependency vulnerability monitoring
-- Automated dependency updates via Dependabot
-
-Security controls may change over time as the project evolves.
+- Argon2id for password hashing
+- Short-lived JWTs (15 min access, 7 day refresh)
+- API keys hashed with SHA-256 before storage
+- Rate limiting on gateway endpoints
+- Helmet for HTTP security headers
+- Full audit trail of auth events
+- Dependabot for dependency updates
 
 ---
 

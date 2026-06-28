@@ -26,6 +26,6 @@ export const errorHandler = (err: HttpError, req: Request, res: Response, _next:
   res.status(500).json({
     success: false,
     error: 'INTERNAL_SERVER_ERROR',
-    message: 'An unexpected error occurred in the API Gateway'
+    message: 'Something went wrong'
   });
 };

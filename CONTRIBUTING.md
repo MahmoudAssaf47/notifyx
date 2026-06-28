@@ -57,7 +57,7 @@ Before submitting:
 - TypeScript strict mode
 - 2-space indent
 - No unused imports
-- Function names: short and clear (`authenticateUser`, not `handleUserAuthenticationProcess`)
+- Function names: short and clear
 
 ## Releases
 

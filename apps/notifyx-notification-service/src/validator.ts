@@ -50,33 +50,25 @@ export const validateNotifyRequest = (body: unknown): NotifyRequest => {
     body: candidate.body,
   };
 
-  if (candidate.subject !== undefined) {
-    if (typeof candidate.subject !== "string") {
-      throw new Error("Subject must be a string");
-    }
-    result.subject = candidate.subject;
+  if (candidate.subject !== undefined && typeof candidate.subject !== "string") {
+    throw new Error("Subject must be a string");
   }
+  if (typeof candidate.subject === "string") result.subject = candidate.subject;
 
-  if (candidate.to !== undefined) {
-    if (typeof candidate.to !== "string") {
-      throw new Error("Recipient (to) must be a string");
-    }
-    result.to = candidate.to;
+  if (candidate.to !== undefined && typeof candidate.to !== "string") {
+    throw new Error("Recipient (to) must be a string");
   }
+  if (typeof candidate.to === "string") result.to = candidate.to;
 
-  if (candidate.cc !== undefined) {
-    if (typeof candidate.cc !== "string") {
-      throw new Error("CC must be a string");
-    }
-    result.cc = candidate.cc;
+  if (candidate.cc !== undefined && typeof candidate.cc !== "string") {
+    throw new Error("CC must be a string");
   }
+  if (typeof candidate.cc === "string") result.cc = candidate.cc;
 
-  if (candidate.bcc !== undefined) {
-    if (typeof candidate.bcc !== "string") {
-      throw new Error("BCC must be a string");
-    }
-    result.bcc = candidate.bcc;
+  if (candidate.bcc !== undefined && typeof candidate.bcc !== "string") {
+    throw new Error("BCC must be a string");
   }
+  if (typeof candidate.bcc === "string") result.bcc = candidate.bcc;
 
   if (candidate.channel === "email" && !candidate.to && !candidate.cc) {
     throw new Error("Email channel requires at least one recipient (to or cc)");
@@ -86,16 +78,10 @@ export const validateNotifyRequest = (body: unknown): NotifyRequest => {
     if (typeof candidate.sender !== "object" || candidate.sender === null) {
       throw new Error("Sender must be an object");
     }
-    const senderObj = candidate.sender as Record<string, unknown>;
+    const s = candidate.sender as Record<string, unknown>;
     result.sender = {};
-    if (senderObj.name !== undefined) {
-      if (typeof senderObj.name !== "string") throw new Error("Sender name must be a string");
-      result.sender.name = senderObj.name;
-    }
-    if (senderObj.email !== undefined) {
-      if (typeof senderObj.email !== "string") throw new Error("Sender email must be a string");
-      result.sender.email = senderObj.email;
-    }
+    if (s.name !== undefined && typeof s.name === "string") result.sender.name = s.name;
+    if (s.email !== undefined && typeof s.email === "string") result.sender.email = s.email;
   }
 
   if (candidate.metadata !== undefined) {
@@ -105,11 +91,10 @@ export const validateNotifyRequest = (body: unknown): NotifyRequest => {
     const meta = candidate.metadata as Record<string, unknown>;
     const cleanMeta: Record<string, string | number | boolean> = {};
     for (const [key, val] of Object.entries(meta)) {
-      if (typeof val === "string" || typeof val === "number" || typeof val === "boolean") {
-        cleanMeta[key] = val;
-      } else {
-        throw new Error(`Metadata key '${key}' has invalid type. Supported: string, number, boolean`);
+      if (typeof val !== "string" && typeof val !== "number" && typeof val !== "boolean") {
+        throw new Error(`Metadata key '${key}' must be string, number, or boolean`);
       }
+      cleanMeta[key] = val;
     }
     result.metadata = cleanMeta;
   }

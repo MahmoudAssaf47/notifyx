@@ -1,39 +1,30 @@
-# NotifyX Roadmap
+# Roadmap
 
-## v1.0 — Current
-- Multi-channel notification delivery
-- Authentication and API key management
-- Audit logging and analytics
-- Spam detection
-- Docker deployment
+Things we want to build, roughly ordered by priority.
 
-## v1.1 — Short Term (Q3 2026)
-- [ ] Expand test coverage (unit, integration, e2e)
-- [ ] Notification templates with variable substitution
-- [ ] Scheduled/delayed notifications
-- [ ] Rate limiting per API key (not just IP)
-- [ ] Pagination improvements (cursor-based)
-- [ ] Email verification flow
+## Now (v1.x)
 
-## v2.0 — Medium Term (Q4 2026)
-- [ ] Multi-tenant isolation
-- [ ] Webhook receiver for delivery confirmations
-- [ ] SMS and push notification channels
-- [ ] Notification preference management per user
-- [ ] OpenTelemetry integration for distributed tracing
-- [ ] Kubernetes Helm charts
+- Better test coverage — unit, integration, and e2e
+- Notification templates with variables
+- Scheduled/delayed sends
+- Per-key rate limiting (not just per-IP)
+- Email verification flow
 
-## v2.5 — Long Term (Q1 2027)
-- [ ] Event sourcing for complete audit trail
-- [ ] Per-service MongoDB databases
-- [ ] Service mesh (Istio/Linkerd) support
-- [ ] Feature flags for gradual rollouts
-- [ ] Admin dashboard UI
-- [ ] Webhook retry with idempotency keys
+## Next (v2.0)
 
-## v3.0 — Future
-- [ ] Plugin system for custom channel integrations
-- [ ] Machine learning spam detection
-- [ ] Multi-region deployment support
-- [ ] Real-time notification status via WebSocket
-- [ ] SLA monitoring and alerting
+- Multi-tenant isolation
+- Webhook receiver for delivery confirmations
+- SMS and push notification channels
+- User notification preferences
+- OpenTelemetry for distributed tracing
+- Helm charts for Kubernetes
+
+## Later
+
+- Event sourcing for audit trail
+- Per-service databases
+- Admin dashboard UI
+- Plugin system for custom channels
+- WebSocket for real-time status
+
+This will change as we learn what actually matters.
