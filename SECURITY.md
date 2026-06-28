@@ -4,46 +4,84 @@
 
 | Version | Supported |
 |---------|-----------|
-| 1.0.x | Yes |
-| < 1.0 | No |
+| Latest | ✅ |
+| Older releases | ❌ |
+
+---
 
 ## Reporting a Vulnerability
 
-**Email:** mahmoudassaf952@gmail.com
+If you discover a security vulnerability, please **do not create a public GitHub issue**.
 
-Or use [GitHub Security Advisories](https://github.com/MahmoudAssaf47/notifyx/security/advisories/new) for private reporting.
+Instead, report it privately using one of the following methods:
 
-Do NOT open a public issue for security vulnerabilities.
+- **GitHub Security Advisories**
+  https://github.com/MahmoudAssaf47/notifyx/security/advisories/new
 
-### Response Timeline
+- **Email**
+  mahmoudassaf952@gmail.com
 
-- **48 hours** — acknowledgment
-- **7 days** — assessment and initial fix for critical issues
-- **30 days** — fix or mitigation for non-critical issues
+Please include:
 
-## Security Measures
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Proof of concept (if available)
+- Suggested mitigation (optional)
 
-### Authentication
-- **Passwords:** Argon2id (memoryCost: 65536, timeCost: 3, parallelism: 4)
-- **JWT:** Short-lived access tokens (15m), refresh rotation (7d)
-- **API Keys:** SHA-256 hashed, shown once at creation
-- **Admin:** Separate `ADMIN_API_KEY` isolated from user auth
+---
 
-### Data Protection
-- SMTP credentials encrypted at rest (AES-256-CBC)
-- All MongoDB queries use Mongoose (no string interpolation)
-- Rate limiting: IP-based (1000/15min) + API key-based (200/min)
-- Helmet security headers on gateway
+## Response Timeline
 
-### Audit
-- All auth events logged (login, register, token refresh, API key create/revoke)
-- All delivery attempts logged (success, failure, spam)
-- Correlation IDs propagated across all services
+| Severity | Initial Response | Status Update | Target Resolution |
+|----------|------------------|---------------|-------------------|
+| Critical | Within 48 hours | Within 7 days | As soon as possible |
+| High | Within 72 hours | Within 7 days | As resources allow |
+| Medium / Low | Within 7 days | As needed | Future release |
+
+Response times are targets rather than guarantees.
+
+---
+
+## Security Practices
+
+NotifyX follows industry security practices including:
+
+- Password hashing using Argon2id
+- Short-lived JWT access tokens
+- Refresh token rotation
+- Hashed API keys
+- Rate limiting
+- Security headers
+- Audit logging
+- Dependency vulnerability monitoring
+- Automated dependency updates via Dependabot
+
+Security controls may change over time as the project evolves.
+
+---
+
+## Scope
+
+This policy applies to:
+
+- API Gateway
+- Authentication Service
+- Notification Service
+- User Service
+- Database interactions
+- Public APIs
+
+Third-party services are outside the scope of this policy.
+
+---
 
 ## Hall of Fame
 
-Researchers who report valid vulnerabilities will be credited here (with permission).
+Researchers who responsibly disclose valid vulnerabilities may be acknowledged here with their permission.
+
+---
 
 ## License
 
-This security policy is part of NotifyX, licensed under MIT.
+This security policy is distributed under the MIT License together with NotifyX.
