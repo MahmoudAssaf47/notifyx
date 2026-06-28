@@ -1,4 +1,7 @@
 import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import { z } from "zod";
 import { createLogger, connectDB, AppConfigModel, Analytics, runWithCorrelation } from "@notifyx/shared";
 import * as dotenv from 'dotenv';
 import { randomUUID } from "crypto";
@@ -10,7 +13,24 @@ const logger = createLogger("AdminService");
 const app = express();
 const port = process.env.ADMIN_PORT ?? '3006';
 
+app.use(helmet());
+app.use(cors());
 app.use(express.json());
+
+const createAppSchema = z.object({
+  appName: z.string().min(2).max(50),
+  apiKey: z.string().min(20),
+  discordWebhook: z.string().url().optional(),
+  discordColor: z.number().int().optional(),
+  slackWebhook: z.string().url().optional(),
+  telegramToken: z.string().optional(),
+  telegramChatId: z.string().optional(),
+  emailHost: z.string().optional(),
+  emailPort: z.number().int().optional(),
+  emailUser: z.string().optional(),
+  emailPass: z.string().optional(),
+  emailFrom: z.string().email().optional(),
+});
 
 app.use((req, res, next) => {
   const correlationId = (req.get("X-Correlation-ID") || randomUUID()) as string;
@@ -46,24 +66,14 @@ const startServer = async () => {
 
   app.post("/api/admin/apps", async (req, res) => {
     try {
-      const { appName, apiKey, discordWebhook, discordColor, slackWebhook, telegramToken, telegramChatId, emailHost, emailPort, emailUser, emailPass, emailFrom } = req.body;
-
-      const newApp = await AppConfigModel.create({
-        appName,
-        apiKey,
-        discordWebhook,
-        discordColor,
-        slackWebhook,
-        telegramToken,
-        telegramChatId,
-        emailHost,
-        emailPort,
-        emailUser,
-        emailPass,
-        emailFrom
-      });
+      const validated = createAppSchema.parse(req.body);
+      const newApp = await AppConfigModel.create(validated);
       res.json({ success: true, data: newApp });
     } catch (err) {
+      if (err instanceof z.ZodError) {
+        res.status(400).json({ success: false, error: "Validation Error", details: err.errors });
+        return;
+      }
       logger.error("Failed to create app", { error: err instanceof Error ? err.message : String(err) });
       res.status(500).json({ success: false, error: "Failed to create app" });
     }

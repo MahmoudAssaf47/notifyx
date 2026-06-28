@@ -5,7 +5,10 @@ const logger = createLogger('DB');
 
 export const connectDB = async (uri: string): Promise<void> => {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(uri, {
+      maxPoolSize: 10,
+      minPoolSize: 2,
+    });
     logger.info('Connected to MongoDB');
   } catch (error) {
     logger.error('MongoDB connection error', { error: error instanceof Error ? error.message : String(error) });

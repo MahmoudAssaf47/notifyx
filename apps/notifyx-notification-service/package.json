@@ -10,14 +10,16 @@
   },
   "dependencies": {
     "express": "^5.2.1",
+    "helmet": "^8.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "zod": "^3.22.4",
     "bullmq": "^5.7.8",
     "ioredis": "^5.4.1",
     "@notifyx/shared": "*"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
+    "@types/cors": "^2.8.17",
     "@types/node": "^22.0.0",
     "typescript": "^5.4.2",
     "tsx": "^4.7.1"

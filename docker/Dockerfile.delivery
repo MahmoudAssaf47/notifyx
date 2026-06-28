@@ -12,4 +12,5 @@ RUN npm prune --omit=dev --workspace=notifyx-delivery-service
 FROM node:22-alpine AS runner
 WORKDIR /app
 COPY --from=builder /app .
+USER node
 CMD ["node", "apps/notifyx-delivery-service/dist/worker.js"]

@@ -1,48 +1,49 @@
-# NotifyX Security Policy
+# Security Policy
+
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| 1.0.x | Yes |
+| < 1.0 | No |
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in NotifyX, please report it privately to the project owner.
+**Email:** mahmoudassaf952@gmail.com
 
-**Do not disclose the vulnerability publicly until it has been addressed.**
+Or use [GitHub Security Advisories](https://github.com/MahmoudAssaf47/notifyx/security/advisories/new) for private reporting.
 
-Contact: https://github.com/MahmoudAssaf47
+Do NOT open a public issue for security vulnerabilities.
+
+### Response Timeline
+
+- **48 hours** — acknowledgment
+- **7 days** — assessment and initial fix for critical issues
+- **30 days** — fix or mitigation for non-critical issues
 
 ## Security Measures
 
 ### Authentication
-- JWT-based authentication with short-lived access tokens (15m default)
-- Refresh tokens for session management (7d default)
-- Argon2id password hashing with strong parameters
-- API key authentication for notification dispatch
-
-### Authorization
-- Role-based access control (admin, developer, viewer)
-- Admin-only audit log access
-- Separate admin API key from notification API keys
+- **Passwords:** Argon2id (memoryCost: 65536, timeCost: 3, parallelism: 4)
+- **JWT:** Short-lived access tokens (15m), refresh rotation (7d)
+- **API Keys:** SHA-256 hashed, shown once at creation
+- **Admin:** Separate `ADMIN_API_KEY` isolated from user auth
 
 ### Data Protection
-- SMTP credentials encrypted at rest in MongoDB
-- CORS configured per environment
-- Helmet security headers on all HTTP responses
-- Rate limiting on all public endpoints
+- SMTP credentials encrypted at rest (AES-256-CBC)
+- All MongoDB queries use Mongoose (no string interpolation)
+- Rate limiting: IP-based (1000/15min) + API key-based (200/min)
+- Helmet security headers on gateway
 
-### Infrastructure
-- Graceful shutdown handlers for all services
-- Health check endpoints for all services
-- Correlation ID tracking across service boundaries
+### Audit
+- All auth events logged (login, register, token refresh, API key create/revoke)
+- All delivery attempts logged (success, failure, spam)
+- Correlation IDs propagated across all services
 
-## OWASP Compliance
+## Hall of Fame
 
-| Category | Status |
-|----------|--------|
-| A01: Broken Access Control | Protected |
-| A02: Cryptographic Failures | Protected |
-| A03: Injection | Protected (Mongoose + Zod) |
-| A04: Insecure Design | Addressed |
-| A05: Security Misconfiguration | Addressed |
-| A06: Vulnerable Components | Review regularly |
-| A07: Authentication Failures | Protected |
-| A08: Data Integrity | Protected |
-| A09: Logging & Monitoring | Implemented |
-| A10: SSRF | Mitigated |
+Researchers who report valid vulnerabilities will be credited here (with permission).
+
+## License
+
+This security policy is part of NotifyX, licensed under MIT.

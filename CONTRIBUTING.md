@@ -1,61 +1,64 @@
 # Contributing to NotifyX
 
-Thank you for your interest in contributing to NotifyX.
-
-## Code of Conduct
-
-By participating, you agree to abide by the [Code of Conduct](CODE_OF_CONDUCT.md).
-
-## Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run lint and type check (`npm run lint && npm run typecheck`)
-5. Commit with clear messages
-6. Push and open a Pull Request
-
-## Development Setup
+## Setup
 
 ```bash
-# Clone and install
 git clone https://github.com/MahmoudAssaf47/notifyx.git
 cd notifyx
 npm install
-
-# Copy environment variables
 cp .env.example .env
-
-# Start in development mode
 npm run dev
 ```
 
-## Pull Request Guidelines
+## Commit Format
 
-- Keep changes focused. One feature per PR.
-- Write clear commit messages.
-- Update documentation for any changed behavior.
-- Ensure all secrets are in environment variables, never hardcoded.
-- Add tests for new functionality.
-
-## Project Structure
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-apps/          # Microservices
-packages/      # Shared libraries
-docker/        # Dockerfiles
-docs/          # Documentation
-.github/       # CI and templates
+<type>: <description>
 ```
+
+Types:
+- `feat:` — new feature
+- `fix:` — bug fix
+- `chore:` — maintenance, deps, config
+- `docs:` — documentation only
+- `test:` — adding or fixing tests
+- `refactor:` — code restructuring without behavior change
+
+Examples:
+```
+feat: add Telegram channel support
+fix: handle empty webhook URL gracefully
+chore: update mongoose to 8.3
+docs: add API reference for /api/notify
+```
+
+## Branch Names
+
+- `feature/description` — new features
+- `fix/description` — bug fixes
+- `chore/description` — maintenance
+
+## Pull Request Checklist
+
+Before submitting:
+
+- [ ] `npm run build` passes
+- [ ] `npm run test` passes
+- [ ] `npm run lint` passes
+- [ ] No secrets or credentials in code
+- [ ] No AI-generated comments ("This function...", "Initialize the...")
+- [ ] Documentation updated if behavior changed
+- [ ] One concern per PR — keep it focused
 
 ## Code Style
 
-- TypeScript with strict mode
-- 2-space indentation
-- No unused variables or imports
-- Clear function and variable names
-- JSDoc comments for public APIs
+- TypeScript strict mode
+- 2-space indent
+- No unused imports
+- Function names: short and clear (`authenticateUser`, not `handleUserAuthenticationProcess`)
 
-## Questions?
+## Releases
 
-Open an issue or reach out to [Mahmoud Assaf](https://github.com/MahmoudAssaf47).
+Only maintainers tag releases. Do not include version bumps in PRs.

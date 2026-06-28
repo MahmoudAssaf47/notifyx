@@ -11,6 +11,11 @@ const logger = createLogger("AnalyticsService");
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  logger.error("JWT_SECRET environment variable is required. Application cannot start without it.");
+  process.exit(1);
+}
+
 const requireAdmin = (req: express.Request, res: express.Response, next: express.NextFunction): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

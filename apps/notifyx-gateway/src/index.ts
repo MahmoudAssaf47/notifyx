@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { createLogger } from '@notifyx/shared';
 import { correlationIdMiddleware } from './middleware/correlation.js';
-import { globalRateLimiter, apiRateLimiter } from './middleware/rateLimiter.js';
+import { globalRateLimiter, apiRateLimiter, apiKeyRateLimiter } from './middleware/rateLimiter.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -27,7 +27,7 @@ app.get('/health', (req, res) => {
 
 const authServiceUrl = process.env.AUTH_SERVICE_URL ?? 'http://localhost:3001';
 const notificationServiceUrl = process.env.NOTIFICATION_SERVICE_URL ?? 'http://localhost:3002';
-const auditServiceUrl = process.env.AUDIT_SERVICE_URL ?? 'http://localhost:3003';
+const auditServiceUrl = process.env.AUDIT_SERVICE_URL ?? 'http://localhost:3005';
 
 app.use('/api/auth', createProxyMiddleware({
   target: authServiceUrl,
@@ -35,7 +35,7 @@ app.use('/api/auth', createProxyMiddleware({
   pathRewrite: { '^/api/auth': '/api/auth' }
 }));
 
-app.use('/api/notify', apiRateLimiter, createProxyMiddleware({
+app.use('/api/notify', apiRateLimiter, apiKeyRateLimiter, createProxyMiddleware({
   target: notificationServiceUrl,
   changeOrigin: true,
   pathRewrite: { '^/api/notify': '/api/notify' }

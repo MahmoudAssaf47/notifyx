@@ -8,6 +8,12 @@ services:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh --quiet
       interval: 10s
@@ -19,6 +25,12 @@ services:
     container_name: notifyx-redis
     ports:
       - "6379:6379"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -39,11 +51,26 @@ services:
       - NOTIFICATION_SERVICE_URL=http://notification:3002
       - AUDIT_SERVICE_URL=http://audit:3005
       - REDIS_URL=redis://redis:6379
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     depends_on:
-      - auth
-      - notification
-      - audit
-      - redis
+      auth:
+        condition: service_healthy
+      notification:
+        condition: service_started
+      audit:
+        condition: service_started
+      redis:
+        condition: service_healthy
 
   auth:
     build:
@@ -61,6 +88,17 @@ services:
       - JWT_EXPIRES_IN=15m
       - REFRESH_SECRET=${REFRESH_SECRET}
       - REFRESH_EXPIRES_IN=7d
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
     depends_on:
       mongodb:
         condition: service_healthy
@@ -82,8 +120,15 @@ services:
       - DISPATCH_DEFAULT_DISCORD_WEBHOOK=${DISPATCH_DEFAULT_DISCORD_WEBHOOK}
       - DISPATCH_DEFAULT_DISCORD_COLOR=${DISPATCH_DEFAULT_DISCORD_COLOR}
       - DISPATCH_DEFAULT_SLACK_WEBHOOK=${DISPATCH_DEFAULT_SLACK_WEBHOOK}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   delivery:
     build:
@@ -92,7 +137,6 @@ services:
     container_name: notifyx-delivery
     environment:
       - NODE_ENV=production
-      - DELIVERY_PORT=3003
       - REDIS_URL=redis://redis:6379
       - DISPATCH_APPS=${DISPATCH_APPS}
       - DISPATCH_DEFAULT_NAME=${DISPATCH_DEFAULT_NAME}
@@ -100,8 +144,15 @@ services:
       - DISPATCH_DEFAULT_DISCORD_WEBHOOK=${DISPATCH_DEFAULT_DISCORD_WEBHOOK}
       - DISPATCH_DEFAULT_DISCORD_COLOR=${DISPATCH_DEFAULT_DISCORD_COLOR}
       - DISPATCH_DEFAULT_SLACK_WEBHOOK=${DISPATCH_DEFAULT_SLACK_WEBHOOK}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
 
   audit:
     build:
@@ -116,6 +167,12 @@ services:
       - MONGODB_URI=mongodb://mongodb:27017/notifyx
       - REDIS_URL=redis://redis:6379
       - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
     depends_on:
       mongodb:
         condition: service_healthy
@@ -134,6 +191,13 @@ services:
       - ANALYTICS_PORT=3004
       - MONGODB_URI=mongodb://mongodb:27017/notifyx
       - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
     depends_on:
       mongodb:
         condition: service_healthy
@@ -150,6 +214,12 @@ services:
       - ADMIN_PORT=3006
       - MONGODB_URI=mongodb://mongodb:27017/notifyx
       - ADMIN_API_KEY=${ADMIN_API_KEY}
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
     depends_on:
       mongodb:
         condition: service_healthy

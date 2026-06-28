@@ -1,22 +1,5 @@
 import { describe, it, expect } from "vitest";
-
-// Inline test of the spam check logic from notification service
-function checkSpam(body: string): { isSpam: boolean; category?: string; reason?: string } {
-  const SPAM_KEYWORDS = [
-    "viagra", "cialis", "casino", "gambling", "crypto", "bitcoin",
-    "buy now", "discount", "free offer", "make money", "investment",
-  ];
-  const lowercaseBody = body.toLowerCase();
-  for (const keyword of SPAM_KEYWORDS) {
-    if (lowercaseBody.includes(keyword)) {
-      return { isSpam: true, category: "content_filter", reason: `Contains forbidden keyword: ${keyword}` };
-    }
-  }
-  if (/<script/i.test(body) || /javascript:/i.test(body)) {
-    return { isSpam: true, category: "security", reason: "Script injection detected" };
-  }
-  return { isSpam: false };
-}
+import { checkSpam } from "../../../apps/notifyx-notification-service/src/validator.js";
 
 describe("Spam Detection", () => {
   it("detects spam keywords", () => {

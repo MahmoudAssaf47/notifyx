@@ -5,12 +5,16 @@ import {
   runWithCorrelation,
 } from "@notifyx/shared";
 import express from "express";
+import helmet from "helmet";
+import cors from "cors";
 import { checkSpam, validateNotifyRequest } from "./validator.js";
 
 const logger = createLogger("NotificationService");
 
 export const startNotificationService = (port: number): Promise<void> => {
   const app = express();
+  app.use(helmet());
+  app.use(cors());
   app.use(express.json());
 
   const appsConfig = loadAppsConfigFromEnv();

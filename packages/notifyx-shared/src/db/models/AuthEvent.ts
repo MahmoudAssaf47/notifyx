@@ -24,4 +24,6 @@ const AuthEventSchema = new Schema(
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 
+AuthEventSchema.index({ userId: 1, createdAt: -1 });
+
 export const AuthEvent = mongoose.model<IAuthEvent>('AuthEvent', AuthEventSchema, 'auth_events');

@@ -14,7 +14,7 @@ const DEFAULT_DISCORD_COLOR = 5814783;
 const DEFAULT_SLACK_COLOR = "#58B9FF";
 const TITLE_MAX_LENGTH = 50;
 
-const computeTitle = (subject?: string, body?: string): string => {
+export const computeTitle = (subject?: string, body?: string): string => {
   const content = body ?? "";
   if (subject) return subject;
   return content.length > TITLE_MAX_LENGTH
@@ -54,6 +54,7 @@ export const sendDiscord = async (
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ embeds: [embed] }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (response.ok) return { success: true };
@@ -97,6 +98,7 @@ export const sendSlack = async (
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ attachments: [{ color: defaultFormat?.color ?? DEFAULT_SLACK_COLOR, blocks }] }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (response.ok) return { success: true };
@@ -126,6 +128,7 @@ export const sendTelegram = async (
         text,
         parse_mode: "Markdown"
       }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (response.ok) return { success: true };
@@ -154,6 +157,7 @@ export const sendWebhook = async (
       method: "POST",
       headers,
       body,
+      signal: AbortSignal.timeout(10000),
     });
 
     if (response.ok) return { success: true };
