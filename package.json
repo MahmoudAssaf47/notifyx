@@ -2,6 +2,7 @@
   "name": "notifyx-platform",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "npm@11.6.2",
   "description": "NotifyX — Enterprise Multi-Channel Notification Platform",
   "repository": {
     "type": "git",
@@ -28,7 +29,7 @@
   "devDependencies": {
     "eslint": "^10.5.0",
     "prettier": "^3.2.5",
-    "turbo": "^1.12.5",
+    "turbo": "^2.9.14",
     "typescript": "^5.4.2",
     "typescript-eslint": "^8.62.0",
     "vitest": "^4.1.9"
