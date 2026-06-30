@@ -85,8 +85,9 @@ Build the infrastructure that makes contributors feel welcome the moment they ar
 
 ### 1.7 Community Health Review
 
-- [x] README with screenshots/GIF placeholders (add when demo is ready)
+- [x] README with screenshots/GIF placeholders (deferred — add when UI is polished)
 - [x] Contributing guide with clear onboarding path
+- [x] AI transparency section added to README
 - [x] Issue templates for easy reporting
 - [x] Label system for easy discovery
 - [x] Discussions enabled for community building
