@@ -71,56 +71,69 @@ npm run dev
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Client Application                       │
-│                     (Your app, CI/CD, etc.)                     │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │ HTTP Request
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     Gateway (:8080)                              │
-│            Auth · Rate Limiting · Request Routing                │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │
-              ┌────────────┼────────────┐
-              ▼            ▼            ▼
-┌──────────────────┐ ┌───────────┐ ┌──────────────┐
-│    Notification   │ │   Audit   │ │   Analytics  │
-│     Service       │ │  Service  │ │   Service    │
-│                   │ │           │ │              │
-│ Spam Check        │ │ Log all   │ │ Metrics &    │
-│ Template Render   │ │ events    │ │ Dashboards   │
-│ Queue Message     │ │           │ │              │
-└────────┬─────────┘ └───────────┘ └──────────────┘
-         │
-         ▼
-┌──────────────────────────────────────────┐
-│          Queue (Redis / In-Memory)        │
-└──────────────────┬───────────────────────┘
-                   │
-                   ▼
-┌──────────────────────────────────────────┐
-│          Delivery Worker                  │
-│    Route → Channel → Retry → Log         │
-└──────┬─────┬──────┬──────┬──────┬───────┘
-       │     │      │      │      │
-       ▼     ▼      ▼      ▼      ▼
-   Discord Slack Telegram Email Webhook
+```mermaid
+flowchart TB
+    subgraph Clients
+        C1["Client Apps"]
+        C2["Dashboard"]
+    end
+
+    subgraph Gateway["Gateway - :8080"]
+        GW["Rate Limit - Auth - Proxy"]
+    end
+
+    subgraph Core["Core Platform"]
+        Auth["Auth\nJWT - API Keys"]
+        Notif["Notification\nValidation - Spam Check"]
+        Admin["Admin\nApp Config"]
+    end
+
+    subgraph Queue["Message Queue"]
+        Q["BullMQ\nRedis / In-Memory"]
+    end
+
+    subgraph Workers["Worker Layer"]
+        DL["Delivery\nCircuit Breaker - Retry"]
+        AN["Analytics\nMetrics - Aggregation"]
+        AU["Audit\nEvent Logging"]
+    end
+
+    subgraph Channels["Notification Channels"]
+        DC["Discord"]
+        SL["Slack"]
+        TG["Telegram"]
+        EM["Email"]
+        WH["Webhook"]
+    end
+
+    subgraph Storage["Storage"]
+        DB[("MongoDB")]
+        RD[("Redis")]
+    end
+
+    C1 & C2 --> GW
+    GW --> Auth & Notif & Admin
+    Auth & Notif --> Q
+    Q --> DL & AN & AU
+    DL --> DC & SL & TG & EM & WH
+    Auth & Admin & AN & AU --> DB
+    DL & Notif --> RD
 ```
 
 **7 Microservices:**
 | Service | Role |
 |---------|------|
-| **Gateway** | API entry point, auth, routing |
+| **Gateway** | API entry point, rate limiting, request proxying |
 | **Auth** | JWT tokens, API keys, user management |
-| **Notification** | Processing, spam checks, templating |
-| **Delivery** | Channel routing, retries, delivery |
-| **Audit** | Event logging, compliance |
-| **Analytics** | Metrics, dashboards, insights |
-| **Admin** | App management, configuration |
+| **Notification** | Request validation, spam detection, queue ingestion |
+| **Delivery** | Channel routing, circuit breaker, retry logic |
+| **Audit** | Event logging, compliance, query API |
+| **Analytics** | Metrics collection, aggregation, dashboards |
+| **Admin** | App configuration, system management |
 
-All services communicate via pub/sub queue (Redis or in-memory fallback).
+All services communicate via pub/sub message queue (Redis/BullMQ or in-memory fallback).
+
+> **[Full architecture documentation →](docs/ARCHITECTURE.md)**
 
 ## Usage
 
@@ -187,11 +200,11 @@ See `.env.example` for the full list. Full variable reference: [DATABASE.md](doc
 
 ## Documentation
 
+- [Architecture](docs/ARCHITECTURE.md) — System design, diagrams, and service breakdown
 - [API Reference](docs/API_REFERENCE.md)
 - [Database Schema](docs/DATABASE.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Event System](docs/EVENTS.md)
-- [Docker Guide](docs/DOCKER.md) — *coming soon*
 - [Contributing Guide](CONTRIBUTING.md)
 
 ## Contributing
