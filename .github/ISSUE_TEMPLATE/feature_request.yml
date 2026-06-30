@@ -1,0 +1,78 @@
+name: Feature Request
+description: Suggest a new feature or improvement for NotifyX
+title: "[FEATURE] "
+labels: ["type: feature", "triage"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please describe what you'd like to see and why.
+
+  - type: dropdown
+    id: service
+    attributes:
+      label: Related Service
+      description: Which area of NotifyX does this relate to?
+      options:
+        - Gateway
+        - Auth Service
+        - Notification Service
+        - Delivery Worker
+        - Audit Service
+        - Analytics Service
+        - Admin Service
+        - Shared Package (@notifyx/shared)
+        - New Channel Provider
+        - Documentation
+        - Other / Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem does this feature solve? Is it related to a frustration?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you want to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Are there other ways to solve this problem?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: impact
+    attributes:
+      label: Impact
+      description: What kind of change is this?
+      options:
+        - New feature
+        - Enhancement to existing feature
+        - New channel provider
+        - Breaking change
+        - Performance improvement
+        - Security improvement
+        - Documentation improvement
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context, mockups, or references.
+    validations:
+      required: false
