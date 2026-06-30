@@ -228,6 +228,10 @@ Browse all [good first issues →](https://github.com/MahmoudAssaf47/notifyx/lab
 
 See the full [Roadmap →](ROADMAP.md)
 
+## AI Transparency
+
+NotifyX is developed with the assistance of AI tools to improve productivity, documentation, issue management, and code quality. All generated content is reviewed, validated, and approved by the maintainer before being merged. Architectural decisions, code reviews, and final approvals remain under the project maintainer's responsibility.
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting and security measures.
